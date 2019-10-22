@@ -105,13 +105,13 @@ def breadthFirstSearch(problem):
         if len(fringe) == 0: 
             print("No solution")
             sys.exit()
-        n = fringe.pop(0) #Cola
+        n = fringe.pop(0) #Queue
         generated[n.state] = [n,'E']
         for state, action, cost in problem.getSuccessors(n.state):
             ns = node.Node(state,n,action,cost)
             if ns.state not in generated:
-                if problem.isGoalState(ns.state): return ns.path()
-                fringe.append(ns)
+                if problem.isGoalState(ns.state): return ns.path() #more eficient, we can also do it after extracting node from the fringe
+                fringe.append(ns)                                               
                 generated[ns.state] = [ns,'F']
 
     util.raiseNotDefined()        
@@ -126,7 +126,7 @@ def uniformCostSearch(problem):
             print("No solution")
             sys.exit()
         n = fringe.pop()
-        if problem.isGoalState(n.state): return n.path() #Goal state reached
+        if problem.isGoalState(n.state): return n.path() #Its obligatory that has to be after extracting node from frindge.
         generated[n.state] = [n,'E']
         for state, action, cost in problem.getSuccessors(n.state): #Sucesors of the node
                 ns = node.Node(state,n,action,cost)
@@ -177,16 +177,10 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
-def aStarSearch(problem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-
 def bestFirstSearch(problem, heuristic=nullHeuristic):
-#  EDITAR CON HEURISTICA
     n = node.Node(problem.getStartState(),None,None,0)
     fringe = util.PriorityQueue()  #We have the data structure we need to push and pop elms
-    fringe.push(n,n.cost)#heuristic(n.state,problem)         
+    fringe.push(n,heuristic(n.state,problem))         
     generated = {n.state:[n,'F']} 
     while True:
         if fringe.isEmpty(): #No more paths to explore
@@ -198,17 +192,43 @@ def bestFirstSearch(problem, heuristic=nullHeuristic):
         for state, action, cost in problem.getSuccessors(n.state): #Sucesors of the node
                 ns = node.Node(state,n,action,cost)
                 if ns.state not in generated:   #Add node to fringe if its not in fringe(to explore) and not in the expanded (explored) 
-                    fringe.push(ns,ns.cost)
+                    fringe.push(ns,heuristic(ns.state,problem))
                     generated[ns.state] = [ns,'F']
                 elif generated[ns.state][0].cost > ns.cost: #Update fringe if we can reach same state with less cost
-                    fringe.push(ns,ns.cost)
+                    fringe.push(ns,heuristic(ns.state,problem))
+                    generated[ns.state] = [ns,'F']
+            
+    util.raiseNotDefined()
+    
+def pathMax(father, son):
+    if father > son: return father
+    else: return son
+
+def aStarSearch(problem, heuristic=nullHeuristic):
+    n = node.Node(problem.getStartState(),None,None,0)
+    fringe = util.PriorityQueue()  #We have the data structure we need to push and pop elms
+    fringe.push(n,n.cost+heuristic(n.state,problem))         
+    generated = {n.state:[n,'F']} 
+    while True:
+        if fringe.isEmpty(): #No more paths to explore
+            print("No solution")
+            sys.exit()
+        n = fringe.pop()
+        if problem.isGoalState(n.state): return n.path() #Goal state reached
+        generated[n.state] = [n,'E']
+        for state, action, cost in problem.getSuccessors(n.state): #Sucesors of the node
+                ns = node.Node(state,n,action,cost)
+                if ns.state not in generated:   #Add node to fringe if its not in fringe(to explore) and not in the expanded (explored) 
+                    f = pathMax(ns.parent.cost+heuristic(ns.parent.state,problem),ns.cost+heuristic(ns.state,problem))
+                    fringe.push(ns,f)
+                    generated[ns.state] = [ns,'F']
+                elif generated[ns.state][0].cost > ns.cost: #Update fringe if we can reach same state with less cost
+                    f = pathMax(ns.parent.cost+heuristic(ns.parent.state,problem),ns.cost+heuristic(ns.state,problem))
+                    fringe.push(ns,f)
                     generated[ns.state] = [ns,'F']
             
     util.raiseNotDefined()
 
-
-
-    util.raiseNotDefined()
 
 # Abbreviations
 bfs = breadthFirstSearch
