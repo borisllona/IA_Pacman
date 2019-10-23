@@ -118,7 +118,7 @@ def breadthFirstSearch(problem):
 
 def uniformCostSearch(problem):
     n = node.Node(problem.getStartState(),None,None,0)
-    fringe = util.PriorityQueue()  #We have the data structure we need to push and pop elms
+    fringe = util.PriorityQueue()  #f(n) = g(n)
     fringe.push(n,n.cost)         
     generated = {n.state:[n,'F']} 
     while True:
@@ -180,7 +180,7 @@ def nullHeuristic(state, problem=None):
 def bestFirstSearch(problem, heuristic=nullHeuristic):
     n = node.Node(problem.getStartState(),None,None,0)
     fringe = util.PriorityQueue()  #We have the data structure we need to push and pop elms
-    fringe.push(n,heuristic(n.state,problem))         
+    fringe.push(n,heuristic(n.state,problem))   #f(n) = h(n) 
     generated = {n.state:[n,'F']} 
     while True:
         if fringe.isEmpty(): #No more paths to explore
@@ -206,8 +206,8 @@ def pathMax(father, son):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     n = node.Node(problem.getStartState(),None,None,0)
-    fringe = util.PriorityQueue()  #We have the data structure we need to push and pop elms
-    fringe.push(n,n.cost+heuristic(n.state,problem))         
+    fringe = util.PriorityQueue()  
+    fringe.push(n,n.cost+heuristic(n.state,problem)) #f(n) = g(n) + h(n)      
     generated = {n.state:[n,'F']} 
     while True:
         if fringe.isEmpty(): #No more paths to explore
@@ -229,6 +229,10 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             
     util.raiseNotDefined()
 
+#test de solucion en los sucesores
+
+#implementar bidireccional
+#probar con todos los mapas(script sh) i generador de mapas aleatorios (informados con las dos heuristicas)
 
 # Abbreviations
 bfs = breadthFirstSearch
@@ -236,4 +240,4 @@ dfs = depthFirstSearch
 astar = aStarSearch
 ucs = uniformCostSearch
 dls = depthLimitedSearch
-bestfs = bestFirstSearch
+bfsh = bestFirstSearch
