@@ -18,7 +18,7 @@ import re
 import sys
 
 
-# Class which models a question in a project.  Note that questions have a
+# Class which sizels a question in a project.  Note that questions have a
 # maximum number of points they are worth, and are composed of a series of
 # test cases
 class Question(object):
