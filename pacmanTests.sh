@@ -48,9 +48,9 @@ test(){
     touch executionResults.txt
 
     #testDiferentAlgorithms <Width> <Height> <Number of random maps>
-    testDiferentAlgorithms 20 20 5
+    testDiferentAlgorithms 20 20 20
     cp executionResults.txt ./testResults/resultsSmall.txt
-    testDiferentAlgorithms 100 100 5
+    testDiferentAlgorithms 100 100 10
     cp executionResults.txt ./testResults/resultsMedium.txt
     testDiferentAlgorithms 500 500 5
     cp executionResults.txt ./testResults/resultsBig.txt
