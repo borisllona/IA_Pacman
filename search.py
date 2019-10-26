@@ -202,7 +202,7 @@ def bestFirstSearch(problem, heuristic=nullHeuristic):
     
 def pathMax(father, son):
     if father > son: return father
-    else: return son
+    return son
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     n = node.Node(problem.getStartState(),None,None,0)
@@ -219,42 +219,15 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         for state, action, cost in problem.getSuccessors(n.state): #Sucesors of the node
                 ns = node.Node(state,n,action,cost)
                 if ns.state not in generated:   #Add node to fringe if its not in fringe(to explore) and not in the expanded (explored) 
-                    f = pathMax(ns.parent.cost+heuristic(ns.parent.state,problem),ns.cost+heuristic(ns.state,problem))
+                    f = pathMax(n.cost+heuristic(n.state,problem),ns.cost+heuristic(ns.state,problem))
                     fringe.push(ns,f)
                     generated[ns.state] = [ns,'F']
                 elif generated[ns.state][0].cost > ns.cost: #Update fringe if we can reach same state with less cost
-                    f = pathMax(ns.parent.cost+heuristic(ns.parent.state,problem),ns.cost+heuristic(ns.state,problem)) #en que afecta?
+                    f = pathMax(n.cost+heuristic(n.state,problem),ns.cost+heuristic(ns.state,problem))
                     fringe.push(ns,f)
                     generated[ns.state] = [ns,'F']
             
     util.raiseNotDefined()
-
-def aStarSearchTestSucesors(problem, heuristic=nullHeuristic):
-    n = node.Node(problem.getStartState(),None,None,0)
-    fringe = util.PriorityQueue()  
-    fringe.push(n,n.cost+heuristic(n.state,problem))    
-    generated = {n.state:[n,'F']} 
-    while True:
-        if fringe.isEmpty(): 
-            print("No solution")
-            sys.exit()
-        n = fringe.pop()
-        generated[n.state] = [n,'E']
-        for state, action, cost in problem.getSuccessors(n.state):
-                ns = node.Node(state,n,action,cost)
-                if problem.isGoalState(ns.state): return n.path() 
-                if ns.state not in generated:  
-                    f = pathMax(ns.parent.cost+heuristic(ns.parent.state,problem),ns.cost+heuristic(ns.state,problem))
-                    fringe.push(ns,f)
-                    generated[ns.state] = [ns,'F']
-                elif generated[ns.state][0].cost > ns.cost: 
-                    f = pathMax(ns.parent.cost+heuristic(ns.parent.state,problem),ns.cost+heuristic(ns.state,problem))
-                    fringe.push(ns,f)
-                    generated[ns.state] = [ns,'F']
-            
-    util.raiseNotDefined()
-
-#test de solucion en los sucesores
 
 #implementar bidireccional
 
@@ -262,7 +235,6 @@ def aStarSearchTestSucesors(problem, heuristic=nullHeuristic):
 bfs = breadthFirstSearch
 dfs = depthFirstSearch
 astar = aStarSearch
-astarts = aStarSearchTestSucesors
 ucs = uniformCostSearch
 dls = depthLimitedSearch
 bfsh = bestFirstSearch

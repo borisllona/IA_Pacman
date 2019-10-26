@@ -23,12 +23,12 @@ def getResults(col):
                     if count == iterations:
                         count = 0
                     if len(alg)<iterations:
-                        alg.append(int(lline[col]))
+                        alg.append(float(lline[col]))
                         count+=1
                         total+=1
                     else:    
-                        num = int(alg.pop(count))
-                        num+=int(lline[col])
+                        num = float(alg.pop(count))
+                        num+=float(lline[col])
                         alg.insert(count,num)
                         count+=1
                         total+=1   
@@ -36,7 +36,9 @@ def getResults(col):
         dictionary = algorithms.pop(0)
         total = total/iterations
         for j in modes:
-            dictionary[j] = round(alg.pop(0)/total,2)
+            if col == 2: dictionary[j] = alg.pop(0)/total
+            else: dictionary[j] = round(alg.pop(0)/total,2)
+
     return [algorithmsSmall,algorithmsMedium,algorithmsBig]
 
 def showResults(size,name):
@@ -57,9 +59,9 @@ def showResults(size,name):
 if __name__ == "__main__":
     
     costPath = getResults(0)
-    #nodesExpanded = getResults(1)
-    #totalTime = getResults(2) problema con ints
+    nodesExpanded = getResults(1)
+    totalTime = getResults(2)
 
     showResults(costPath,'Path Cost')
-    #showResults(nodesExpanded,'Nodes Expanded')
-    #showResults(totalTime,'Execution Time')
+    showResults(nodesExpanded,'Nodes Expanded')
+    showResults(totalTime,'Execution Time')

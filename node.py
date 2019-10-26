@@ -1,20 +1,20 @@
-#Node.py
-
 class Node:
 
-    def __init__(self,_state,_parent=None,_action=None,_cost=0,depth=0):
-        self.state = _state
-        self.parent = _parent
-        self.action = _action
-        self.cost = 0
-        if self.parent:
-            self.cost = self.cost + self.parent.cost
-        self.depth = depth
+	def __init__(self, state, parent=None, action=None, cost=0, depth=0):
+		self.parent = parent
+		self.action = action
+		self.state = state
+		self.cost = 0
+		self.depth = 0
+		if self.parent != None:
+			self.cost = cost + self.parent.cost
+			self.depth = depth + self.parent.depth
+		
 
-    def path(self):
-        path = []
-        curr = self
-        while(curr.parent):
-            path.append(curr.action)
-            curr = curr.parent
-        return list(reversed(path))
+	def path(self):
+		node_path = []
+		current = self
+		while current.parent != None:
+			node_path.append(current.action)
+			current = current.parent
+		return list(reversed(node_path))

@@ -18,14 +18,7 @@ testAStar(){
     echo ""
     echo "--- Testeando A* con la heuristica ${1} ---" 
     echo ""
-    python2.7 pacman.py -l test.lay -p SearchAgent -a fn=astar,heuristic=$1 -q
-    echo "                ******"
-}
-testAStarTS(){
-    echo ""
-    echo "--- Testeando A* con la heuristica ${1} ---" 
-    echo ""
-    python2.7 pacman.py -l test.lay -p SearchAgent -a fn=astarts,heuristic=$1 -q
+    timeout 5 python2.7 pacman.py -l test.lay -p SearchAgent -a fn=astar,heuristic=$1 -q
     echo "                ******"
 }
 
@@ -50,32 +43,21 @@ testDiferentAlgorithms(){
         echo '@' >> 'executionResults.txt'
     done     
 }
-testWhereSucessors(){
-    r=$((1 + RANDOM % 5))
-    python2.7 gmap.py 2000 2000 0.${r} $((RANDOM)) > ./layouts/test.lay
-    touch executionResults.txt
-    testAStar manhattanHeuristic
-    testAStarTS manhattanHeuristic  
-    cp executionResults.txt ./testResults/resultsSucessors.txt
-    rm executionResults.txt
-    #python analyzeWhereSuccesors
-}
 
 test(){
     touch executionResults.txt
 
     #testDiferentAlgorithms <Width> <Height> <Number of random maps>
-    'testDiferentAlgorithms 20 20 5
+    testDiferentAlgorithms 20 20 5
     cp executionResults.txt ./testResults/resultsSmall.txt
     testDiferentAlgorithms 100 100 5
-    cp executionResults.txt ./testResults/resultsMedium.txt'
+    cp executionResults.txt ./testResults/resultsMedium.txt
     testDiferentAlgorithms 500 500 5
     cp executionResults.txt ./testResults/resultsBig.txt
 
     rm executionResults.txt
     cd testResults
-    #python analyzeResults.py
+    python analyzeResults.py
 }
 
 test
-#testWhereSucessors
