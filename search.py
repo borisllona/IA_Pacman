@@ -264,7 +264,7 @@ def bidirectionalSearch(problem):
                 nsg = node.Node(state,ng,action,cost)
                 if nsg.state not in generatedG:
                     if nsg.state in generatedI.keys(): 
-                        return nsi.path()+generatedG[nsi.state][0].invertedpath() #Pete si entre aqui, sino va
+                        return generatedI[nsg.state][0].path()+nsg.invertedpath()
                         sys.exit(0)    
                     fringeG.append(nsg)                                            
                     generatedG[nsg.state] = [nsg,'F']
