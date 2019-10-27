@@ -1,3 +1,4 @@
+import game
 class Node:
 
 	def __init__(self, state, parent=None, action=None, cost=0, depth=0):
@@ -18,3 +19,11 @@ class Node:
 			node_path.append(current.action)
 			current = current.parent
 		return list(reversed(node_path))
+
+	def invertedpath(self):
+		node_path = []
+		current = self
+		while current.parent != None:
+			node_path.append(game.Actions.reverseDirection(current.action))
+			current = current.parent
+		return list(node_path)

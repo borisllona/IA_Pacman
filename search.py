@@ -82,7 +82,7 @@ def depthFirstSearch(problem):
     generated = {n.state:[n,'F']}
     while True:
         if len(fringe) == 0: 
-            print("No solution")
+            sys.stderr.write('No solution')
             sys.exit()
         n = fringe.pop() #Pila
         generated[n.state] = [n,'E']
@@ -103,7 +103,7 @@ def breadthFirstSearch(problem):
     generated = {n.state:[n,'F']}
     while True:
         if len(fringe) == 0: 
-            print("No solution")
+            sys.stderr.write('No solution')
             sys.exit()
         n = fringe.pop(0) #Queue
         generated[n.state] = [n,'E']
@@ -123,7 +123,7 @@ def uniformCostSearch(problem):
     generated = {n.state:[n,'F']} 
     while True:
         if fringe.isEmpty(): #No more paths to explore
-            print("No solution")
+            sys.stderr.write('No solution')
             sys.exit()
         n = fringe.pop()
         if problem.isGoalState(n.state): return n.path() #Its obligatory that has to be after extracting node from frindge.
@@ -184,7 +184,7 @@ def bestFirstSearch(problem, heuristic=nullHeuristic):
     generated = {n.state:[n,'F']} 
     while True:
         if fringe.isEmpty(): #No more paths to explore
-            print("No solution")
+            sys.stderr.write('No solution')
             sys.exit()
         n = fringe.pop()
         if problem.isGoalState(n.state): return n.path() #Goal state reached
@@ -211,7 +211,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     generated = {n.state:[n,'F']} 
     while True:
         if fringe.isEmpty(): #No more paths to explore
-            print("No solution")
+            sys.stderr.write('No solution')
             sys.exit()
         n = fringe.pop()
         if problem.isGoalState(n.state): return n.path() #Goal state reached
@@ -229,7 +229,48 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             
     util.raiseNotDefined()
 
-#implementar bidireccional
+def bidirectionalSearch(problem):
+    cont = 1
+    ni = node.Node(problem.getStartState(),None,None,0)
+    ng = node.Node(problem.goal,None,None,0)
+    if ni.state == ng.state: return ni.path()
+    fringeI = [ni]
+    fringeG = [ng]    
+    generatedI = {ni.state:[ni,'F']}
+    generatedG = {ng.state:[ng,'F']}
+    nsg = ng
+    while True:
+        if cont%2 != 0:
+            if len(fringeI) == 0: 
+                sys.stderr.write('No solution')
+                sys.exit()
+            ni = fringeI.pop(0) #Queue
+            generatedI[ni.state] = [ni,'E']
+            for state, action, cost in problem.getSuccessors(ni.state):
+                nsi = node.Node(state,ni,action,cost)
+                if nsi.state not in generatedI:
+                    if nsi.state in generatedG.keys(): 
+                        return nsi.path()+generatedG[nsi.state][0].invertedpath()
+                        sys.exit(0)
+                    fringeI.append(nsi)                                            
+                    generatedI[nsi.state] = [nsi,'F']
+        else:
+            if len(fringeG) == 0: 
+                sys.stderr.write('No solution')
+                sys.exit()
+            ng = fringeG.pop(0) #Queue
+            generatedG[ng.state] = [ng,'E']
+            for state, action, cost in problem.getSuccessors(ng.state):
+                nsg = node.Node(state,ng,action,cost)
+                if nsg.state not in generatedG:
+                    if nsg.state in generatedI.keys(): 
+                        return nsi.path()+generatedG[nsi.state][0].invertedpath() #Pete si entre aqui, sino va
+                        sys.exit(0)    
+                    fringeG.append(nsg)                                            
+                    generatedG[nsg.state] = [nsg,'F']
+        cont+=1
+    util.raiseNotDefined() 
+
 
 # Abbreviations
 bfs = breadthFirstSearch
@@ -238,3 +279,5 @@ astar = aStarSearch
 ucs = uniformCostSearch
 dls = depthLimitedSearch
 bfsh = bestFirstSearch
+bds = bidirectionalSearch
+
