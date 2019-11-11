@@ -252,17 +252,22 @@ class StayWestSearchAgent(SearchAgent):
         costFn = lambda pos: 2 ** pos[0]
         self.searchType = lambda state: PositionSearchProblem(state, costFn)
 
-def manhattanHeuristic(position, problem, info={}):
+def mandH(position, problem, info={}):
     "The Manhattan distance heuristic for a PositionSearchProblem"
     xy1 = position
     xy2 = problem.goal
     return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
 
-def euclideanHeuristic(position, problem, info={}):
+def eucdH(position, problem, info={}):
     "The Euclidean distance heuristic for a PositionSearchProblem"
     xy1 = position
     xy2 = problem.goal
     return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
+
+def custH(position, problem, info={}):
+    x = abs(position[0] - problem.goal[0])
+    y = abs(position[1] - problem.goal[1])
+    return (x+y)*min(x,y)    
 
 #####################################################
 # This portion is incomplete.  Time to write code!  #
@@ -542,7 +547,3 @@ def mazeDistance(point1, point2, gameState):
     assert not walls[x2][y2], 'point2 is a wall: ' + str(point2)
     prob = PositionSearchProblem(gameState, start=point1, goal=point2, warn=False, visualize=False)
     return len(search.bfs(prob))
-
-
-    mandH = manhattanHeuristic
-    eucdH = euclideanHeuristic

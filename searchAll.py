@@ -76,6 +76,48 @@ def tinyMazeSearch(problem):
 #    Busqueda no informada    #
 ###############################
 
+def depthFirstSearch(problem):
+    n = node.Node(problem.getStartState(),None,None,0)
+    if problem.isGoalState(n.state):
+        return n.path()
+    fringe = [n]    
+    generated = {n.state:[n,'F']}
+    while True:
+        if len(fringe) == 0: 
+            sys.stderr.write('No solution')
+            sys.exit()
+        n = fringe.pop() #Pila
+        generated[n.state] = [n,'E']
+        for state, action, cost in problem.getSuccessors(n.state):
+            ns = node.Node(state,n,action,cost)
+            if ns.state not in generated:
+                if problem.isGoalState(ns.state): return ns.path()
+                fringe.append(ns)
+                generated[ns.state] = [ns,'F']
+
+    util.raiseNotDefined()      
+
+def breadthFirstSearch(problem):
+    n = node.Node(problem.getStartState(),None,None,0)
+    if problem.isGoalState(n.state):
+        return n.path()
+    fringe = [n]    
+    generated = {n.state:[n,'F']}
+    while True:
+        if len(fringe) == 0: 
+            sys.stderr.write('No solution')
+            sys.exit()
+        n = fringe.pop(0) #Queue
+        generated[n.state] = [n,'E']
+        for state, action, cost in problem.getSuccessors(n.state):
+            ns = node.Node(state,n,action,cost)
+            if ns.state not in generated:
+                if problem.isGoalState(ns.state): return ns.path() #more eficient, we can also do it after extracting node from the fringe
+                fringe.append(ns)                                               
+                generated[ns.state] = [ns,'F']
+
+    util.raiseNotDefined()        
+
 def uniformCostSearch(problem):
     n = node.Node(problem.getStartState(),None,None,0)
     fringe = util.PriorityQueue()  #f(n) = g(n)
@@ -96,6 +138,38 @@ def uniformCostSearch(problem):
                 elif generated[ns.state][0].cost > ns.cost: #Update fringe if we can reach same state with less cost
                     fringe.push(ns,ns.cost)
                     generated[ns.state] = [ns,'F']
+            
+    util.raiseNotDefined()
+
+def depthLimitedSearch(problem, k=5):
+    while True:
+        result = DLS(problem,k)
+        if result[0] == 'Failure': #No result
+            sys.exit()
+        elif result[0] == 'True': #Result
+            return result[1]    
+        k+=1                   #Cutoff, we increase a k level
+
+def DLS(problem=None,k=0):
+
+    n = node.Node(problem.getStartState(),None,None,0)
+    fringe = util.Stack()  #Same as pop
+    fringe.push(n)         
+    generated = {n.state:[n,'F']} 
+    while True:
+        if fringe.isEmpty(): #No more paths to explore
+            return ('Failure',None)
+        n = fringe.pop()
+        if n.depth == k: return ("Cutoff",None) #We reached the max level, k is increased in main function.
+        else:
+            generated[n.state] = [n,'E']
+            for state, action, cost in problem.getSuccessors(n.state): #Sucesors of the node
+                    ns = node.Node(state,n,action,cost)
+                    ns.depth = ns.parent.depth + 1
+                    if ns.state not in generated:   #Add node to fringe if its not in fringe(to explore) and not in the expanded (explored) 
+                        if problem.isGoalState(ns.state): return ('True',ns.path())
+                        fringe.push(ns)
+                        generated[ns.state] = [ns,'F']
             
     util.raiseNotDefined()
 
@@ -204,8 +278,11 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     util.raiseNotDefined()
 
 # Abbreviations
+bfs = breadthFirstSearch
+dfs = depthFirstSearch
 astar = aStarSearch
 ucs = uniformCostSearch
+dls = depthLimitedSearch
 bfsh = bestFirstSearch
 bds = bidirectionalSearch
 
